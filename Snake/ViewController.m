@@ -17,41 +17,32 @@ static NSUInteger defaultSize = 10;
 @property (nonatomic) NSTimer *ballTimer;
 @property (nonatomic) NSMutableArray<UIView *> *snakeViews;
 
+@property (nonatomic) UITextField *scoreView;
+@property (nonatomic) UITextField *levelView;
+
 @property (nonatomic) UISwipeGestureRecognizerDirection direction;
+
+@property (nonatomic) NSUInteger score;
+@property (nonatomic) NSUInteger level;
 
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
 
     // Do any additional setup after loading the view, typically from a nib.
     
-    _direction = UISwipeGestureRecognizerDirectionRight;
-    
     // Background color
     [self.view setBackgroundColor:[UIColor greenColor]];
 
-    
     // Game view
     [self .view addSubview:[self newGameFieldView]];
     
-    // Snake
-    UIView *snakeHead = [self newSnakeHeadView];
-    [self.view addSubview:snakeHead];
-    
-    _snakeViews = [NSMutableArray array];
-    [_snakeViews addObject:snakeHead];
-    
-    // Ball
-    [self  updateNewBallView];
-    
-    _ballTimer = [NSTimer timerWithTimeInterval:0.20 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        
-        [self updateSnakeLocation];
-    }];
-    
+    // Start the game
+    [self startGame];
     
     // Tap recognizer
     UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(viewWasSwiped:)];
@@ -71,11 +62,10 @@ static NSUInteger defaultSize = 10;
     [self.view addGestureRecognizer:swipeRight];
     [self.view addGestureRecognizer:swipeUp];
     [self.view addGestureRecognizer:swipeDown];
-    
-    [[NSRunLoop currentRunLoop] addTimer:_ballTimer forMode:NSRunLoopCommonModes];
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -85,6 +75,53 @@ static NSUInteger defaultSize = 10;
     [_ballTimer invalidate];
 }
 
+- (void)startGame
+{
+    // Remove existing views
+    for (UIView *view in self.snakeViews) {
+        [view removeFromSuperview];
+    }
+    
+    if (self.ballView) {
+        [self.ballView removeFromSuperview];
+    }
+    
+    _score = 0;
+    _level = 1;
+    
+    self.scoreView.text = [NSString stringWithFormat:@"%@", @(_score)];
+    self.levelView.text = [NSString stringWithFormat:@"%@", @(_level)];
+    
+    [self setDirection:UISwipeGestureRecognizerDirectionRight];
+    [self setSnakeViews:[NSMutableArray array]];
+    
+    // Snake
+    CGFloat xMin = self.newGameFieldView.frame.origin.x + defaultSize;
+    CGFloat yMin = self.newGameFieldView.frame.origin.y + defaultSize;
+    
+    UIView *sqaureView = [[UIView alloc] initWithFrame:CGRectMake(xMin, yMin, defaultSize, defaultSize)];
+    [sqaureView setBackgroundColor:[UIColor greenColor]];
+    [sqaureView.layer setBorderColor:[[UIColor grayColor] CGColor]];
+    sqaureView.layer.borderWidth = 0.50f;
+    [self.view addSubview:sqaureView];
+
+    [self.snakeViews addObject:sqaureView];
+    
+    // Ball
+    [self  updateNewBallView];
+    
+    [self updateTime:0.25];
+}
+
+- (void)updateTime:(NSTimeInterval)interval
+{
+    _ballTimer = [NSTimer timerWithTimeInterval:interval repeats:YES block:^(NSTimer * _Nonnull timer) {
+        
+        [self updateSnakeLocation];
+    }];
+    
+    [[NSRunLoop currentRunLoop] addTimer:_ballTimer forMode:NSRunLoopCommonModes];
+}
 
 #pragma mark - Game Field View
 
@@ -106,30 +143,60 @@ static NSUInteger defaultSize = 10;
     
     CGFloat yMin = borderY / 2;
     CGFloat yMax = borderY - yMin;
+    
+    // Game + Scoreboard view
     CGFloat height = viewHeight - yMax - yMin;
     
     xMin += defaultSize;
     width -= 2 * defaultSize;
-
-    yMin += defaultSize;
-    height -= (2 * defaultSize);
     
-    _newGameFieldView = [[UIView alloc] initWithFrame:CGRectMake(xMin, yMin, width, height)];
-    [_newGameFieldView setBackgroundColor:[UIColor redColor]];
+    yMin += defaultSize;
+    
+    CGFloat scoreboardHeight = 6 * defaultSize;
+    
+    // Scoreboard
+    UIView *scoreBoard = [[UIView alloc] initWithFrame:CGRectMake(xMin, yMin, width, scoreboardHeight)];
+    
+    [scoreBoard setBackgroundColor:[UIColor grayColor]];
+    [self.view addSubview:scoreBoard];
+    
+    // Score View
+    UITextField *scoreTextField = [[UITextField alloc] initWithFrame:CGRectMake(scoreBoard.bounds.origin.x, scoreBoard.bounds.origin.y,
+                                                                                width / 2, scoreboardHeight / 2)];
+    [scoreTextField setBackgroundColor:[UIColor orangeColor]];
+    scoreTextField.text = @"Score: ";
+    [scoreBoard addSubview:scoreTextField];
+    
+    _scoreView = [[UITextField alloc] initWithFrame:CGRectMake(scoreTextField.frame.origin.x + scoreTextField.frame.size.width,
+                                                               scoreTextField.frame.origin.y, width / 2, scoreboardHeight / 2)];
+    
+    _scoreView.textAlignment = NSTextAlignmentCenter;
+    [_scoreView setBackgroundColor:[UIColor redColor]];
+    [scoreBoard addSubview:_scoreView];
+    
+    // Level View
+    UITextField *levelTextField = [[UITextField alloc] initWithFrame:CGRectMake(scoreBoard.bounds.origin.x, scoreBoard.bounds.origin.y + scoreTextField.bounds.size.height, scoreTextField.bounds.size.width, scoreTextField.bounds.size.height)];
+    [levelTextField setBackgroundColor:[UIColor yellowColor]];
+    levelTextField.text = @"Level: ";
+    [scoreBoard addSubview:levelTextField];
+
+    _levelView = [[UITextField alloc] initWithFrame:CGRectMake(levelTextField.frame.origin.x + levelTextField.frame.size.width,
+                                                               levelTextField.frame.origin.y, width / 2, scoreboardHeight / 2)];
+    
+    _levelView.textAlignment = NSTextAlignmentCenter;
+    [_levelView setBackgroundColor:[UIColor blueColor]];
+    [scoreBoard addSubview:_levelView];
+    
+    CGFloat gameYMin = yMin + scoreboardHeight;
+    
+    
+    CGFloat gameHeight = height - scoreboardHeight;
+    gameHeight -= (2 * defaultSize);
+    
+    _newGameFieldView = [[UIView alloc] initWithFrame:CGRectMake(xMin, gameYMin, width, gameHeight)];
+    [_newGameFieldView setBackgroundColor:[UIColor blackColor]];
     
     return _newGameFieldView;
-}
-
-#pragma mark - Snake Head View
-
-- (UIView *)newSnakeHeadView
-{
-    CGFloat xMin = self.newGameFieldView.frame.origin.x + defaultSize;
-    CGFloat yMin = self.newGameFieldView.frame.origin.y + defaultSize;
-    
-    UIView *sqaureView = [[UIView alloc] initWithFrame:CGRectMake(xMin, yMin, defaultSize, defaultSize)];
-    [sqaureView setBackgroundColor:[UIColor blueColor]];
-    return sqaureView;
 }
 
 #pragma mark - Ball view
@@ -140,14 +207,15 @@ static NSUInteger defaultSize = 10;
     CGFloat yMin = self.newGameFieldView.frame.origin.y + defaultSize;
     
     int scaleX = self.newGameFieldView.frame.size.width / defaultSize;
-    
     int scaleY = self.newGameFieldView.frame.size.height / defaultSize;
     
     CGFloat randomX = arc4random_uniform(scaleX) * defaultSize + xMin;
     CGFloat randomY = arc4random_uniform(scaleY) * defaultSize + yMin;
     
     self.ballView = [[UIView alloc] initWithFrame:CGRectMake(randomX, randomY, defaultSize, defaultSize)];
-    [self.ballView setBackgroundColor:[UIColor yellowColor]];
+    [self.ballView setBackgroundColor:[UIColor redColor]];
+    [self.ballView.layer setBorderColor:[[UIColor grayColor] CGColor]];
+    self.ballView.layer.borderWidth = 0.50f;
     [self.view addSubview:self.ballView];
 }
 
@@ -211,8 +279,18 @@ static NSUInteger defaultSize = 10;
 
 - (void)eatTheBall
 {
+    _score ++;
+    
+    if (_score % 20 == 0) {
+        _level++;
+    }
+    
+    self.scoreView.text = [NSString stringWithFormat:@"%@", @(_score)];
+    self.levelView.text = [NSString stringWithFormat:@"%@", @(_level)];
+    
     // Ball view will be the new head
-    [self.ballView setBackgroundColor:[UIColor blueColor]];
+    UIColor *color = self.snakeViews.firstObject.backgroundColor;
+    [self.ballView setBackgroundColor:color];
     [self.snakeViews addObject:self.ballView];
 }
 
@@ -272,10 +350,11 @@ static NSUInteger defaultSize = 10;
     UIAlertAction *action = [UIAlertAction actionWithTitle:@"Restart" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         NSLog(@"Restarting the game");
-    
+        [self startGame];
     }];
+    
     [alertController addAction:action];
-    [self presentViewController:alertController animated:YES completion:nil];
+    [self presentViewController:alertController animated:NO completion:nil];
 }
 
 
