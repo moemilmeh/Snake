@@ -39,7 +39,13 @@ static NSUInteger defaultSize = 10;
     [self.view setBackgroundColor:[UIColor greenColor]];
 
     // Game view
-    [self .view addSubview:[self newGameFieldView]];
+    [self newGameFieldView];
+
+    // Draw vertical grid lines
+    [self addVerticalGridLinesWithLineWidth:0.17f];
+    
+    // Draw horizontal grid lines
+    [self addHorizontalGridLinesWithLineWidth:0.17f];
     
     // Start the game
     [self startGame];
@@ -196,15 +202,55 @@ static NSUInteger defaultSize = 10;
     _newGameFieldView = [[UIView alloc] initWithFrame:CGRectMake(xMin, gameYMin, width, gameHeight)];
     [_newGameFieldView setBackgroundColor:[UIColor blackColor]];
     
+    [self.view addSubview:_newGameFieldView];
+    
     return _newGameFieldView;
+}
+
+- (void)addVerticalGridLinesWithLineWidth:(CGFloat)lineWidth
+{
+    CGFloat xMin = self.newGameFieldView.frame.origin.x;
+    CGFloat yMin = self.newGameFieldView.frame.origin.y;
+    
+    CGFloat height = self.newGameFieldView.frame.size.height;
+    CGFloat width  = self.newGameFieldView.frame.size.width;
+    
+    // Draw grid line
+    int x = xMin + width;
+    while (x > xMin) {
+        
+        UIView *gridLine = [[UIView alloc] initWithFrame:CGRectMake(x, yMin, lineWidth, height)];
+        [gridLine setBackgroundColor:[UIColor grayColor]];
+        [self.view addSubview:gridLine];
+        x -= defaultSize;
+    }
+}
+
+- (void)addHorizontalGridLinesWithLineWidth:(CGFloat)lineWidth
+{
+    CGFloat xMin = self.newGameFieldView.frame.origin.x;
+    CGFloat yMin = self.newGameFieldView.frame.origin.y;
+    
+    CGFloat height = self.newGameFieldView.frame.size.height;
+    CGFloat width  = self.newGameFieldView.frame.size.width;
+
+    // Draw grid line
+    int y = yMin + height;
+    while (y > yMin) {
+        
+        UIView *gridLine = [[UIView alloc] initWithFrame:CGRectMake(xMin, y, width, lineWidth)];
+        [gridLine setBackgroundColor:[UIColor grayColor]];
+        [self.view addSubview:gridLine];
+        y -= defaultSize;
+    }
 }
 
 #pragma mark - Ball view
 
 - (void)updateNewBallView
 {
-    CGFloat xMin = self.newGameFieldView.frame.origin.x + defaultSize;
-    CGFloat yMin = self.newGameFieldView.frame.origin.y + defaultSize;
+    CGFloat xMin = self.newGameFieldView.frame.origin.x;
+    CGFloat yMin = self.newGameFieldView.frame.origin.y;
     
     int scaleX = self.newGameFieldView.frame.size.width / defaultSize;
     int scaleY = self.newGameFieldView.frame.size.height / defaultSize;
@@ -246,6 +292,7 @@ static NSUInteger defaultSize = 10;
         NSLog(@"Hit the wall");
         [[self  ballTimer] invalidate];
         [self alertWithMessage:@"Hit the wall!" type:0];
+        return;
     }
     
     // Check of we hit the ball
@@ -316,6 +363,27 @@ static NSUInteger defaultSize = 10;
     NSLog(@"P: %@ - Q: %@", @(xMin), @(yMin));
     NSLog(@"X: %@ - Y: %@", @(ballXMin), @(ballYMin));
     
+//    // From Right
+//    if (yMin == ballYMin && yMax == ballYMax && xMax == ballYMin) {
+//        return YES;
+//    }
+//    
+//    // From Left
+//    if (yMin == ballYMin && yMax == ballYMax && xMin == ballXMax) {
+//        return YES;
+//    }
+//    
+//    // From Top
+//    if (xMin == ballXMin && xMax == ballXMax && yMin == ballYMax) {
+//        return YES;
+//    }
+//    
+//    // From Bottom
+//    if (xMin == ballXMin && xMax == ballXMax && yMax == ballYMin) {
+//        return YES;
+//    }
+
+    
     if (ballXMin >= xMin && ballXMax <= xMax && ballYMin >= yMin && ballYMax <= yMax) {
         NSLog(@"Hit the ball");
         return YES;
@@ -334,7 +402,28 @@ static NSUInteger defaultSize = 10;
     CGFloat gameXMax = gameXMin + _newGameFieldView.frame.size.width;
     CGFloat gameYMax = gameYMin + _newGameFieldView.frame.size.height;
     
-    if (x <= gameXMin || y <= gameYMin || x >= gameXMax || y >= gameYMax) {
+    CGFloat xMin = x;
+    CGFloat xMax = x + defaultSize;
+    CGFloat yMin = y;
+    CGFloat yMax = y + defaultSize;
+    
+    // Right Wall
+    if (xMax >= gameXMax) {
+        return YES;
+    }
+    
+    // Left Wall
+    if (xMin <= gameXMin) {
+        return YES;
+    }
+    
+    // Top Wall
+    if (yMax <= gameYMin || yMin <= gameYMin) {
+        return YES;
+    }
+    
+    // Bottom Wall
+    if (yMin >= gameYMax || yMax >= gameYMax) {
         return YES;
     }
     
