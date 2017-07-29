@@ -1,2 +1,5 @@
 # Snake
-Simple Snake Game
+Simple Snake Game!
+
+Nothing fancy!
+

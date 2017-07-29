@@ -11,5 +11,12 @@
 @interface ViewController : UIViewController
 
 
+typedef NS_ENUM(uint8_t, GridLineDirection)
+{
+    GridLineDirectionHorizontal = 0,
+    GridLineDirectionVertical,
+
+};
+
 @end
 

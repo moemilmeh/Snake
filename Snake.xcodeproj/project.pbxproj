@@ -35,7 +35,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		96A8AB5E1EE129C800A67A5C /* Snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Snake.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		96A8AB5E1EE129C800A67A5C /* Snake.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = Snake.app; path = "/Users/work/Repos/Snake/build/Debug-iphoneos/Snake.app"; sourceTree = "<absolute>"; };
 		96A8AB621EE129C800A67A5C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		96A8AB641EE129C800A67A5C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		96A8AB651EE129C800A67A5C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -45,10 +45,10 @@
 		96A8AB6D1EE129C800A67A5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		96A8AB701EE129C800A67A5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		96A8AB721EE129C800A67A5C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		96A8AB771EE129C800A67A5C /* SnakeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnakeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96A8AB771EE129C800A67A5C /* SnakeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = SnakeTests.xctest; path = "/Users/work/Repos/Snake/build/Debug-iphoneos/SnakeTests.xctest"; sourceTree = "<absolute>"; };
 		96A8AB7B1EE129C800A67A5C /* SnakeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SnakeTests.m; sourceTree = "<group>"; };
 		96A8AB7D1EE129C800A67A5C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		96A8AB821EE129C800A67A5C /* SnakeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnakeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96A8AB821EE129C800A67A5C /* SnakeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = SnakeUITests.xctest; path = "/Users/work/Repos/Snake/build/Debug-iphoneos/SnakeUITests.xctest"; sourceTree = "<absolute>"; };
 		96A8AB861EE129C800A67A5C /* SnakeUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SnakeUITests.m; sourceTree = "<group>"; };
 		96A8AB881EE129C800A67A5C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,18 +84,7 @@
 				96A8AB601EE129C800A67A5C /* Snake */,
 				96A8AB7A1EE129C800A67A5C /* SnakeTests */,
 				96A8AB851EE129C800A67A5C /* SnakeUITests */,
-				96A8AB5F1EE129C800A67A5C /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		96A8AB5F1EE129C800A67A5C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				96A8AB5E1EE129C800A67A5C /* Snake.app */,
-				96A8AB771EE129C800A67A5C /* SnakeTests.xctest */,
-				96A8AB821EE129C800A67A5C /* SnakeUITests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		96A8AB601EE129C800A67A5C /* Snake */ = {
@@ -230,7 +219,7 @@
 				Base,
 			);
 			mainGroup = 96A8AB551EE129C700A67A5C;
-			productRefGroup = 96A8AB5F1EE129C800A67A5C /* Products */;
+			productRefGroup = 96A8AB551EE129C700A67A5C;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -509,6 +498,7 @@
 				96A8AB8D1EE129C800A67A5C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96A8AB8E1EE129C800A67A5C /* Build configuration list for PBXNativeTarget "SnakeTests" */ = {
 			isa = XCConfigurationList;
@@ -517,6 +507,7 @@
 				96A8AB901EE129C800A67A5C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		96A8AB911EE129C800A67A5C /* Build configuration list for PBXNativeTarget "SnakeUITests" */ = {
 			isa = XCConfigurationList;
@@ -525,6 +516,7 @@
 				96A8AB931EE129C800A67A5C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

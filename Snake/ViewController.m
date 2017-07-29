@@ -31,8 +31,11 @@ static NSUInteger defaultSize = 10;
 
 - (void)viewDidLoad
 {
+    
     [super viewDidLoad];
 
+    // TODO: Use stack view later
+    
     // Do any additional setup after loading the view, typically from a nib.
     
     // Background color
@@ -42,10 +45,10 @@ static NSUInteger defaultSize = 10;
     [self newGameFieldView];
 
     // Draw vertical grid lines
-    [self addVerticalGridLinesWithLineWidth:0.17f];
+    [self addGridLinesWithLineWidth:0.17f alpha:0.2f direction:GridLineDirectionVertical];
     
     // Draw horizontal grid lines
-    [self addHorizontalGridLinesWithLineWidth:0.17f];
+    [self addGridLinesWithLineWidth:0.17f alpha:0.2f direction:GridLineDirectionHorizontal];
     
     // Start the game
     [self startGame];
@@ -170,27 +173,27 @@ static NSUInteger defaultSize = 10;
     UITextField *scoreTextField = [[UITextField alloc] initWithFrame:CGRectMake(scoreBoard.bounds.origin.x, scoreBoard.bounds.origin.y,
                                                                                 width / 2, scoreboardHeight / 2)];
     [scoreTextField setBackgroundColor:[UIColor orangeColor]];
-    scoreTextField.text = @"Score: ";
+    scoreTextField.text = @" SCORE: ";
     [scoreBoard addSubview:scoreTextField];
     
     _scoreView = [[UITextField alloc] initWithFrame:CGRectMake(scoreTextField.frame.origin.x + scoreTextField.frame.size.width,
                                                                scoreTextField.frame.origin.y, width / 2, scoreboardHeight / 2)];
     
-    _scoreView.textAlignment = NSTextAlignmentCenter;
-    [_scoreView setBackgroundColor:[UIColor redColor]];
+    _scoreView.textAlignment = NSTextAlignmentLeft;
+    [_scoreView setBackgroundColor:[UIColor orangeColor]];
     [scoreBoard addSubview:_scoreView];
     
     // Level View
     UITextField *levelTextField = [[UITextField alloc] initWithFrame:CGRectMake(scoreBoard.bounds.origin.x, scoreBoard.bounds.origin.y + scoreTextField.bounds.size.height, scoreTextField.bounds.size.width, scoreTextField.bounds.size.height)];
     [levelTextField setBackgroundColor:[UIColor yellowColor]];
-    levelTextField.text = @"Level: ";
+    levelTextField.text = @" LEVEL: ";
     [scoreBoard addSubview:levelTextField];
 
     _levelView = [[UITextField alloc] initWithFrame:CGRectMake(levelTextField.frame.origin.x + levelTextField.frame.size.width,
                                                                levelTextField.frame.origin.y, width / 2, scoreboardHeight / 2)];
     
-    _levelView.textAlignment = NSTextAlignmentCenter;
-    [_levelView setBackgroundColor:[UIColor blueColor]];
+    _levelView.textAlignment = NSTextAlignmentLeft;
+    [_levelView setBackgroundColor:[UIColor yellowColor]];
     [scoreBoard addSubview:_levelView];
     
     CGFloat gameYMin = yMin + scoreboardHeight;
@@ -207,42 +210,43 @@ static NSUInteger defaultSize = 10;
     return _newGameFieldView;
 }
 
-- (void)addVerticalGridLinesWithLineWidth:(CGFloat)lineWidth
+#pragma mark - Gird line view
+
+- (void)addGridLinesWithLineWidth:(CGFloat)lineWidth alpha:(CGFloat)alpha direction:(GridLineDirection)direction
 {
+    // Gamefield view
     CGFloat xMin = self.newGameFieldView.frame.origin.x;
     CGFloat yMin = self.newGameFieldView.frame.origin.y;
     
     CGFloat height = self.newGameFieldView.frame.size.height;
     CGFloat width  = self.newGameFieldView.frame.size.width;
     
-    // Draw grid line
-    int x = xMin + width;
-    while (x > xMin) {
-        
-        UIView *gridLine = [[UIView alloc] initWithFrame:CGRectMake(x, yMin, lineWidth, height)];
-        [gridLine setBackgroundColor:[UIColor grayColor]];
-        [self.view addSubview:gridLine];
-        x -= defaultSize;
-    }
-}
-
-- (void)addHorizontalGridLinesWithLineWidth:(CGFloat)lineWidth
-{
-    CGFloat xMin = self.newGameFieldView.frame.origin.x;
-    CGFloat yMin = self.newGameFieldView.frame.origin.y;
+    // Grid line view
+    CGFloat x = (direction == GridLineDirectionVertical) ? xMin + width : xMin;
+    CGFloat y = (direction == GridLineDirectionVertical) ? yMin         : yMin + height;
     
-    CGFloat height = self.newGameFieldView.frame.size.height;
-    CGFloat width  = self.newGameFieldView.frame.size.width;
-
-    // Draw grid line
-    int y = yMin + height;
-    while (y > yMin) {
+    CGFloat w = (direction == GridLineDirectionVertical) ? lineWidth    : width;
+    CGFloat h = (direction == GridLineDirectionVertical) ? height       : lineWidth;
+    
+    CGFloat limiter = (direction == GridLineDirectionVertical) ? x      : y;
+    CGFloat border  = (direction == GridLineDirectionVertical) ? xMin   : yMin;
+    
+    while (limiter > border) {
         
-        UIView *gridLine = [[UIView alloc] initWithFrame:CGRectMake(xMin, y, width, lineWidth)];
+        UIView *gridLine = [[UIView alloc] initWithFrame:CGRectMake(x, y, w, h)];
         [gridLine setBackgroundColor:[UIColor grayColor]];
+        [gridLine setAlpha:alpha];
         [self.view addSubview:gridLine];
-        y -= defaultSize;
+        
+        if (direction == GridLineDirectionVertical) {
+            x -= defaultSize;
+            limiter = x;
+        } else {
+            y -= defaultSize;
+            limiter = y;
+        }
     }
+    
 }
 
 #pragma mark - Ball view
@@ -326,7 +330,7 @@ static NSUInteger defaultSize = 10;
 
 - (void)eatTheBall
 {
-    _score ++;
+    _score++;
     
     if (_score % 20 == 0) {
         _level++;
@@ -362,7 +366,7 @@ static NSUInteger defaultSize = 10;
     
     NSLog(@"P: %@ - Q: %@", @(xMin), @(yMin));
     NSLog(@"X: %@ - Y: %@", @(ballXMin), @(ballYMin));
-    
+
 //    // From Right
 //    if (yMin == ballYMin && yMax == ballYMax && xMax == ballYMin) {
 //        return YES;
