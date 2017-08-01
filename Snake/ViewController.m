@@ -2,8 +2,8 @@
 //  ViewController.m
 //  Snake
 //
-//  Created by work on 6/1/17.
-//  Copyright © 2017 GlucoSavvy. All rights reserved.
+//  Created by MMM on 6/1/17.
+//  Copyright © 2017 MoeMilMeh. All rights reserved.
 //
 
 #import "ViewController.h"
@@ -95,11 +95,12 @@ static NSUInteger defaultSize = 10;
         [self.ballView removeFromSuperview];
     }
     
-    _score = 0;
-    _level = 1;
+    [self setScore:0];
+    [self setLevel:1];
     
-    self.scoreView.text = [NSString stringWithFormat:@"%@", @(_score)];
-    self.levelView.text = [NSString stringWithFormat:@"%@", @(_level)];
+    
+    self.scoreView.text = [NSString stringWithFormat:@"%@", @(self.score)];
+    self.levelView.text = [NSString stringWithFormat:@"%@", @(self.level)];
     
     [self setDirection:UISwipeGestureRecognizerDirectionRight];
     [self setSnakeViews:[NSMutableArray array]];
@@ -119,17 +120,17 @@ static NSUInteger defaultSize = 10;
     // Ball
     [self  updateNewBallView];
     
-    [self updateTime:0.25];
+    [self updateTime:0.15];
 }
 
 - (void)updateTime:(NSTimeInterval)interval
 {
-    _ballTimer = [NSTimer timerWithTimeInterval:interval repeats:YES block:^(NSTimer * _Nonnull timer) {
+    self.ballTimer = [NSTimer timerWithTimeInterval:interval repeats:YES block:^(NSTimer * _Nonnull timer) {
         
         [self updateSnakeLocation];
     }];
     
-    [[NSRunLoop currentRunLoop] addTimer:_ballTimer forMode:NSRunLoopCommonModes];
+    [[NSRunLoop currentRunLoop] addTimer:self.ballTimer forMode:NSRunLoopCommonModes];
 }
 
 #pragma mark - Game Field View
@@ -215,21 +216,21 @@ static NSUInteger defaultSize = 10;
 - (void)addGridLinesWithLineWidth:(CGFloat)lineWidth alpha:(CGFloat)alpha direction:(GridLineDirection)direction
 {
     // Gamefield view
-    CGFloat xMin = self.newGameFieldView.frame.origin.x;
-    CGFloat yMin = self.newGameFieldView.frame.origin.y;
+    CGFloat xMin    = self.newGameFieldView.frame.origin.x;
+    CGFloat yMin    = self.newGameFieldView.frame.origin.y;
     
-    CGFloat height = self.newGameFieldView.frame.size.height;
-    CGFloat width  = self.newGameFieldView.frame.size.width;
+    CGFloat height  = self.newGameFieldView.frame.size.height;
+    CGFloat width   = self.newGameFieldView.frame.size.width;
     
     // Grid line view
-    CGFloat x = (direction == GridLineDirectionVertical) ? xMin + width : xMin;
-    CGFloat y = (direction == GridLineDirectionVertical) ? yMin         : yMin + height;
+    CGFloat x       = (direction == GridLineDirectionVertical) ? xMin + width : xMin;
+    CGFloat y       = (direction == GridLineDirectionVertical) ? yMin         : yMin + height;
     
-    CGFloat w = (direction == GridLineDirectionVertical) ? lineWidth    : width;
-    CGFloat h = (direction == GridLineDirectionVertical) ? height       : lineWidth;
+    CGFloat w       = (direction == GridLineDirectionVertical) ? lineWidth    : width;
+    CGFloat h       = (direction == GridLineDirectionVertical) ? height       : lineWidth;
     
-    CGFloat limiter = (direction == GridLineDirectionVertical) ? x      : y;
-    CGFloat border  = (direction == GridLineDirectionVertical) ? xMin   : yMin;
+    CGFloat limiter = (direction == GridLineDirectionVertical) ? x            : y;
+    CGFloat border  = (direction == GridLineDirectionVertical) ? xMin         : yMin;
     
     while (limiter > border) {
         
@@ -289,7 +290,6 @@ static NSUInteger defaultSize = 10;
     CGFloat snakeXPoint = snakeOrigin.x;
     CGFloat snakeYPoint = snakeOrigin.y;
     
-//    NSLog(@"P: %@ - Q: %@", @(snakeXPoint), @(snakeYPoint));
     
     // Check if we hit the borders
     if ([self snakeHitTheWallWithPointX:snakeXPoint pointY:snakeYPoint]) {
@@ -330,14 +330,14 @@ static NSUInteger defaultSize = 10;
 
 - (void)eatTheBall
 {
-    _score++;
+    self.score++;
     
-    if (_score % 20 == 0) {
-        _level++;
+    if (self.score % 10 == 0) {
+        self.level++;
     }
     
-    self.scoreView.text = [NSString stringWithFormat:@"%@", @(_score)];
-    self.levelView.text = [NSString stringWithFormat:@"%@", @(_level)];
+    self.scoreView.text = [NSString stringWithFormat:@"%@", @(self.score)];
+    self.levelView.text = [NSString stringWithFormat:@"%@", @(self.level)];
     
     // Ball view will be the new head
     UIColor *color = self.snakeViews.firstObject.backgroundColor;
@@ -358,35 +358,14 @@ static NSUInteger defaultSize = 10;
     CGFloat yMax = yMin + frame.size.height;
     
     // Ball location
-    CGFloat ballXMin = _ballView.frame.origin.x;
-    CGFloat ballYMin = _ballView.frame.origin.y;
+    CGFloat ballXMin = self.ballView.frame.origin.x;
+    CGFloat ballYMin = self.ballView.frame.origin.y;
     
-    CGFloat ballXMax = ballXMin + _ballView.frame.size.width;
-    CGFloat ballYMax = ballYMin + _ballView.frame.size.height;
+    CGFloat ballXMax = ballXMin + self.ballView.frame.size.width;
+    CGFloat ballYMax = ballYMin + self.ballView.frame.size.height;
     
     NSLog(@"P: %@ - Q: %@", @(xMin), @(yMin));
     NSLog(@"X: %@ - Y: %@", @(ballXMin), @(ballYMin));
-
-//    // From Right
-//    if (yMin == ballYMin && yMax == ballYMax && xMax == ballYMin) {
-//        return YES;
-//    }
-//    
-//    // From Left
-//    if (yMin == ballYMin && yMax == ballYMax && xMin == ballXMax) {
-//        return YES;
-//    }
-//    
-//    // From Top
-//    if (xMin == ballXMin && xMax == ballXMax && yMin == ballYMax) {
-//        return YES;
-//    }
-//    
-//    // From Bottom
-//    if (xMin == ballXMin && xMax == ballXMax && yMax == ballYMin) {
-//        return YES;
-//    }
-
     
     if (ballXMin >= xMin && ballXMax <= xMax && ballYMin >= yMin && ballYMax <= yMax) {
         NSLog(@"Hit the ball");
@@ -400,11 +379,11 @@ static NSUInteger defaultSize = 10;
 
 - (BOOL)snakeHitTheWallWithPointX:(CGFloat)x pointY:(CGFloat)y
 {
-    CGFloat gameXMin = _newGameFieldView.frame.origin.x;
-    CGFloat gameYMin = _newGameFieldView.frame.origin.y;
+    CGFloat gameXMin = self.newGameFieldView.frame.origin.x;
+    CGFloat gameYMin = self.newGameFieldView.frame.origin.y;
     
-    CGFloat gameXMax = gameXMin + _newGameFieldView.frame.size.width;
-    CGFloat gameYMax = gameYMin + _newGameFieldView.frame.size.height;
+    CGFloat gameXMax = gameXMin + self.newGameFieldView.frame.size.width;
+    CGFloat gameYMax = gameYMin + self.newGameFieldView.frame.size.height;
     
     CGFloat xMin = x;
     CGFloat xMax = x + defaultSize;

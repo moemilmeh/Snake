@@ -2,8 +2,8 @@
 //  AppDelegate.h
 //  Snake
 //
-//  Created by work on 6/1/17.
-//  Copyright © 2017 GlucoSavvy. All rights reserved.
+//  Created by MMM on 6/1/17.
+//  Copyright © 2017 MoeMilMeh. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

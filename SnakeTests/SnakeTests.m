@@ -2,8 +2,8 @@
 //  SnakeTests.m
 //  SnakeTests
 //
-//  Created by work on 6/1/17.
-//  Copyright © 2017 GlucoSavvy. All rights reserved.
+//  Created by MMM on 6/1/17.
+//  Copyright © 2017 MoeMilMeh. All rights reserved.
 //
 
 #import <XCTest/XCTest.h>
